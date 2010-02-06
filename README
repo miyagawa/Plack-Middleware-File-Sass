@@ -1,11 +1,31 @@
 NAME
-    Plack::Middleware::File::Sass -
+    Plack::Middleware::File::Sass - Sass support for all Plack frameworks
 
 SYNOPSIS
-      use Plack::Middleware::File::Sass;
+      use Plack::App::File;
+      use Plack::Builder;
+
+      builder {
+          mount "/stylesheets" => builder {
+              enable "File::Sass";
+              Plack::App::File->new(root => "./stylesheets");
+          };
+      };
+
+      # Or with Middleware::Static
+      enable "File::Sass";
+      enable "Static", path => qr/\.css$/, root => "./static";
 
 DESCRIPTION
-    Plack::Middleware::File::Sass is
+    Plack::Middleware::File::Sass is a Plack middleware component that works
+    with Plack::App::File or Plack::Middleware::Static to compile Sass
+    templates into CSS stylesheet in every request.
+
+    When a request comes in for *.css* file, this middleware changes the
+    internal path to *.sass* in the same directory. If the Sass template is
+    found, a new CSS stylesheet is built on memory and served to the
+    browsers. Otherwise, it falls back to the original *.css* file in the
+    directory.
 
 AUTHOR
     Tatsuhiko Miyagawa <miyagawa@bulknews.net>
@@ -15,3 +35,5 @@ LICENSE
     under the same terms as Perl itself.
 
 SEE ALSO
+    Plack::App::File Text::Sass
+
