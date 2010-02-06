@@ -1,0 +1,17 @@
+NAME
+    Plack::Middleware::File::Sass -
+
+SYNOPSIS
+      use Plack::Middleware::File::Sass;
+
+DESCRIPTION
+    Plack::Middleware::File::Sass is
+
+AUTHOR
+    Tatsuhiko Miyagawa <miyagawa@bulknews.net>
+
+LICENSE
+    This library is free software; you can redistribute it and/or modify it
+    under the same terms as Perl itself.
+
+SEE ALSO
