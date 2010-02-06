@@ -75,13 +75,19 @@ Plack::Middleware::File::Sass - Sass support for all Plack frameworks
 
 Plack::Middleware::File::Sass is a Plack middleware component that
 works with L<Plack::App::File> or L<Plack::Middleware::Static> to
-compile Sass templates into CSS stylesheet in every request.
+compile L<Sass|http://sass-lang.com/> templates into CSS stylesheet in
+every request.
 
 When a request comes in for I<.css> file, this middleware changes the
 internal path to I<.sass> in the same directory. If the Sass template
 is found, a new CSS stylesheet is built on memory and served to the
 browsers.  Otherwise, it falls back to the original I<.css> file in
 the directory.
+
+This middleware should be very handy for the development. While Sass
+to CSS rendering is reasonably fast, for the production environment
+you might want to precompile Sass templates to CSS files on disk and
+serves them with a real web server like nginx or lighttpd.
 
 =head1 AUTHOR
 
@@ -94,6 +100,6 @@ it under the same terms as Perl itself.
 
 =head1 SEE ALSO
 
-L<Plack::App::File> L<Text::Sass>
+L<Plack::App::File> L<Text::Sass> L<http://sass-lang.com/>
 
 =cut
