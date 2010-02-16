@@ -17,7 +17,7 @@ sub prepare_app {
 sub call {
     my($self, $env) = @_;
 
-    # Depends on how App::File works -- not really comfortable
+    # Sort of depends on how App::File works
     my $orig_path_info = $env->{PATH_INFO};
     if ($env->{PATH_INFO} =~ s/\.css$/.sass/i) {
         my $res = $self->app->($env);
