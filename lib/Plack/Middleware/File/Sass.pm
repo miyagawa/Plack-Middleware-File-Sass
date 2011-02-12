@@ -2,7 +2,7 @@ package Plack::Middleware::File::Sass;
 
 use strict;
 use 5.008_001;
-our $VERSION = '0.01';
+our $VERSION = '0.02';
 
 use parent qw(Plack::Middleware);
 use Plack::Util::Accessor qw(sass syntax);
@@ -101,7 +101,7 @@ serves them with a real web server like nginx or lighttpd.
 
 =head1 OPTIONS
 
-=for 4
+=over 4
 
 =item syntax
 

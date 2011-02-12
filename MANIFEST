@@ -22,7 +22,9 @@ README
 t/00_compile.t
 t/bar.css
 t/foo.sass
+t/foo.scss
 t/sass.t
+t/scss.t
 xt/perlcritic.t
 xt/pod.t
 xt/podspell.t
