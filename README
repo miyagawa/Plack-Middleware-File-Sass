@@ -33,6 +33,14 @@ DESCRIPTION
     might want to precompile Sass templates to CSS files on disk and serves
     them with a real web server like nginx or lighttpd.
 
+SASS BACKENDS
+    If you have the sass gem version higher than 3 installed and have the
+    "sass" executable available in your PATH, this module automatically uses
+    the command to convert Sass or SCSS into CSS. If the command is not
+    available and you have Text::Sass perl module available, it will be
+    used. Otherwise you'll get an exception during the initialization of
+    this middleware component.
+
 OPTIONS
     syntax
         Defines which syntax to use. Valid values are *sass* and *scss*.
