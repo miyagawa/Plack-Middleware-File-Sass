@@ -4,6 +4,7 @@ use Plack::Middleware::File::Sass;
 use Test::More;
 use Plack::Test;
 use HTTP::Request::Common;
+use Test::Requires qw(Text::Sass);
 
 my $app = Plack::App::File->new(root => "t");
 $app = Plack::Middleware::File::Sass->wrap($app);

@@ -7,9 +7,10 @@ our $VERSION = '0.02';
 use parent qw(Plack::Middleware);
 use Plack::Util::Accessor qw(sass syntax);
 use Plack::Util;
-use Text::Sass;
+use IPC::Open3 qw(open3);
 use Carp ();
 
+my $text_sass;
 my %valid = (sass => 1, scss => 1);
 
 sub prepare_app {
@@ -18,14 +19,42 @@ sub prepare_app {
     $self->syntax("sass") unless defined $self->syntax;
     $valid{$self->syntax} or Carp::croak("Unsupported syntax: ", $self->syntax);
 
-    $self->sass(Text::Sass->new);
+    my $sass = `sass -v`;
+    if ($sass && $sass =~ /Sass 3/) {
+        $self->sass(\&sass_command);
+    } elsif (eval { require Text::Sass }) {
+        $self->sass(\&sass_perl);
+    } else {
+        Carp::croak("Can't find sass gem nor Text::Sass module");
+    }
+}
+
+sub sass_command {
+    my($syntax, $body) = @_;
+
+    my $pid = open3(my $in, my $out, my $err,
+          "sass", "--stdin", ($syntax eq 'scss' ? '--scss' : ()));
+    print $in $body;
+    close $in;
+
+    my $buf = join '', <$out>;
+    waitpid $pid, 0;
+
+    return $buf;
+}
+
+sub sass_perl {
+    my($syntax, $body) = @_;
+
+    my $method = "${syntax}2css";
+    $text_sass ||= Text::Sass->new;
+    $text_sass->$method($body);
 }
 
 sub call {
     my($self, $env) = @_;
 
     my $syntax = $self->syntax;
-    my $method = "${syntax}2css";
 
     # Sort of depends on how App::File works
     my $orig_path_info = $env->{PATH_INFO};
@@ -36,7 +65,7 @@ sub call {
 
         if ($res->[0] == 200) {
             my $sass; Plack::Util::foreach($res->[2], sub { $sass .= $_[0] });
-            my $css = $self->sass->$method($sass);
+            my $css = $self->sass->($syntax, $sass);
 
             my $h = Plack::Util::headers($res->[1]);
             $h->set('Content-Type' => 'text/css');
@@ -98,6 +127,15 @@ This middleware should be very handy for the development. While Sass
 to CSS rendering is reasonably fast, for the production environment
 you might want to precompile Sass templates to CSS files on disk and
 serves them with a real web server like nginx or lighttpd.
+
+=head1 SASS BACKENDS
+
+If you have the sass gem version higher than 3 installed and have the
+C<sass> executable available in your PATH, this module automatically
+uses the command to convert Sass or SCSS into CSS. If the command is
+not available and you have L<Text::Sass> perl module available, it
+will be used. Otherwise you'll get an exception during the
+initialization of this middleware component.
 
 =head1 OPTIONS
 
