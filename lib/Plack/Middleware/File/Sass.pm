@@ -7,7 +7,6 @@ our $VERSION = '0.03';
 use parent qw(Plack::Middleware);
 use Plack::Util::Accessor qw(sass syntax);
 use Plack::Util;
-use IPC::Open3 qw(open3);
 use Carp ();
 
 my $text_sass;
@@ -32,7 +31,8 @@ sub prepare_app {
 sub sass_command {
     my($syntax, $body) = @_;
 
-    my $pid = open3(my $in, my $out, my $err,
+    require IPC::Open3;
+    my $pid = IPC::Open3::open3(my $in, my $out, my $err,
           "sass", "--stdin", ($syntax eq 'scss' ? '--scss' : ()));
     print $in $body;
     close $in;
